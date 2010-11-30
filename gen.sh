@@ -1,7 +1,7 @@
 #!/bin/sh
-export RTM_ROOT="/opt/grx"
-export PATH=/opt/grx/bin/:$PATH
-export LD_LIBRARY_PATH=/opt/grx/lib:/opt/grx/lib/OpenRTM-aist:$LD_LIBRARY_PATH
+export RTM_PATH=/opt/grx
+export PATH=$RTM_PATH/bin/:$PATH
+export LD_LIBRARY_PATH=$RTM_PATH/lib:$RTM_PATH/lib/OpenRTM-aist:$LD_LIBRARY_PATH
 /opt/grx/bin/rtc-template -bcxx \
     --module-name=VideoStream \
 	--module-type='SequenceInComponent' \
@@ -12,6 +12,6 @@ export LD_LIBRARY_PATH=/opt/grx/lib:/opt/grx/lib/OpenRTM-aist:$LD_LIBRARY_PATH
     --module-comp-type=DataFlowComponent \
 	--module-act-type=SPORADIC \
     --module-max-inst=1 \
-    --outport=DoubleSeq:MultiCameraImages \
+    --outport=MultiCameraImages:MultiCameraImages \
     --service=VideoStreamService:service0:VideoStreamService \
     --service-idl=VideoStreamService.idl

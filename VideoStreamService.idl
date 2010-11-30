@@ -3,5 +3,5 @@
 
 interface VideoStreamService
 {
-	void capture(in long times);
+  void capture(in long times);
 };
