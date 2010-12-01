@@ -1,13 +1,15 @@
-target:all
-camera.o:camera.cpp
-	g++ -c camera.cpp -I. `pkg-config --cflags opencv`
+target:camera.o all
 
 include Makefile.VideoStream
 
 LDFLAGS+= `pkg-config --libs opencv`
 OBJS+=camera.o
 
+camera.o:camera.cpp
+	g++ -c $< -I. `pkg-config --cflags opencv`
+
 VideoStreamService.jar:
-	idlj -fclient -fserver -emitAll -td src -I /opt/grx/include/rtm/idl/  VideoStreamService.idl
-	javac src/*.java
-	jar cvf VideoStreamService.jar src/*.class -C src
+	mkdir -p java/bin
+	idlj -fclient -fserver -emitAll -td java/src -I /opt/grx/include/rtm/idl/  VideoStreamService.idl
+	javac -d java/bin/ -sourcepath java/src java/src/*.java
+	jar cvf VideoStreamService.jar -C java/bin/ .
