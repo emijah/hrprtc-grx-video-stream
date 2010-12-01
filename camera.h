@@ -4,7 +4,7 @@
 class camera
 {
 	public:
-		camera (unsigned int devId);
+		camera (unsigned int devId, bool fileout = false);
 		~camera ();
 		char *capture ();
 		double getHeight ();
@@ -17,4 +17,5 @@ class camera
 		double width, height;
 		int num;
 		char str[64];
+		bool fileout;
 };

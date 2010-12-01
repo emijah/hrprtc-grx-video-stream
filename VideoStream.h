@@ -133,6 +133,8 @@ RTC::DataFlowComponentBase
 		std::vector <
 			camera * >
 			m_cameras;
+		bool
+			fileout;
 };
 
 extern

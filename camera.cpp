@@ -2,7 +2,7 @@
 #include <boost/lexical_cast.hpp>
 #include "camera.h"
 
-camera::camera (unsigned int devId)
+camera::camera (unsigned int devId, bool fileout)
 {
 	width = 320;
 	height = 240;
@@ -11,13 +11,17 @@ camera::camera (unsigned int devId)
 	cvCapture = cvCaptureFromCAM (devId);
 	cvSetCaptureProperty (cvCapture, CV_CAP_PROP_FRAME_WIDTH, width);
 	cvSetCaptureProperty (cvCapture, CV_CAP_PROP_FRAME_HEIGHT, height);
-	std::string fname =
-		"cap" + boost::lexical_cast < std::string > (devId) + ".avi";
-	vw =
-		cvCreateVideoWriter (fname.c_str (), CV_FOURCC ('X', 'V', 'I', 'D'), 15,
-		cvSize ((int) width, (int) height));
 
-	//cvInitFont (&font, CV_FONT_HERSHEY_COMPLEX, 0.7, 0.7);
+	if (fileout)
+	{
+		std::string fname =
+			"cap" + boost::lexical_cast < std::string > (devId) + ".avi";
+		vw =
+			cvCreateVideoWriter (fname.c_str (), CV_FOURCC ('X', 'V', 'I', 'D'),
+			15, cvSize ((int) width, (int) height));
+
+		cvInitFont (&font, CV_FONT_HERSHEY_COMPLEX, 0.7, 0.7);
+	}
 	//cvNamedWindow ("Capture", CV_WINDOW_AUTOSIZE);
 }
 
@@ -34,9 +38,12 @@ char *
 camera::capture ()
 {
 	frame = cvQueryFrame (cvCapture);
-	//snprintf (str, 64, "%03d[frame]", num);
-	//cvPutText (frame, str, cvPoint (10, 20), &font, CV_RGB (0, 255, 100));
-	//cvWriteFrame (vw, frame);
+	if (fileout)
+	{
+		snprintf (str, 64, "%03d[frame]", num);
+		cvPutText (frame, str, cvPoint (10, 20), &font, CV_RGB (0, 255, 100));
+		cvWriteFrame (vw, frame);
+	}
 	//cvShowImage ("Capture", frame);
 	num++;
 	return frame->imageData;

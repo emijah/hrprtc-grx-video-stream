@@ -69,15 +69,17 @@ RTC::ReturnCode_t VideoStream::onInitialize ()
 
 	// </rtc-template>
 
+	RTC::Properties & prop = getProperties ();
+	fileout = coil::toBool (prop["fileout"].c_str (), "YES", "NO", false);
+
 	std::vector < int >
 		devIds;
-	RTC::Properties & prop = getProperties ();
 	coil::stringTo (devIds, prop["camera_dev_id"].c_str ());
 	m_MultiCameraImages.images.length (devIds.size ());
 	for (unsigned int i = 0; i < devIds.size (); i++)
 	{
 		camera *
-			cam = new camera (devIds[i]);
+			cam = new camera (devIds[i], fileout);
 		m_cameras.push_back (cam);
 		m_MultiCameraImages.images[i].width = cam->getWidth ();
 		m_MultiCameraImages.images[i].height = cam->getHeight ();
@@ -131,7 +133,9 @@ RTC::ReturnCode_t VideoStream::onExecute (RTC::UniqueId ec_id)
 			memcpy (m_MultiCameraImages.images[i].pixels.get_buffer (), imgFrom,
 				m_MultiCameraImages.images[i].pixels.length () *
 				sizeof (char));
+			std::cout << (unsigned int) imgFrom[1000] << " ";
 		}
+		std::cout << std::endl;
 		if (m_service0.numCapture > 0)
 		{
 			m_service0.numCapture--;
