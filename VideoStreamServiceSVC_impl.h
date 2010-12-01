@@ -31,6 +31,7 @@ PortableServer::RefCountServantBase
 		// attributes and operations
 		void
 			capture (::CORBA::Long times);
-
+		int
+			numCapture;
 };
 #endif							 // VIDEOSTREAMSERVICESVC_IMPL_H

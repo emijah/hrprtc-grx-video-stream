@@ -116,9 +116,16 @@ RTC::ReturnCode_t VideoStream::onDeactivated(RTC::UniqueId ec_id)
 
 RTC::ReturnCode_t VideoStream::onExecute (RTC::UniqueId ec_id)
 {
-	for (unsigned int i = 0; i < m_cameras.size (); i++)
+	if (m_service0.numCapture != 0)
 	{
-		m_cameras[i]->capture ();
+		for (unsigned int i = 0; i < m_cameras.size (); i++)
+		{
+			m_cameras[i]->capture ();
+		}
+		if (m_service0.numCapture > 0)
+		{
+			m_service0.numCapture--;
+		}
 	}
 	return RTC::RTC_OK;
 }

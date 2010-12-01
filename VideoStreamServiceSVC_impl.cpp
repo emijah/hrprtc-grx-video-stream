@@ -13,6 +13,7 @@
 VideoStreamServiceSVC_impl::VideoStreamServiceSVC_impl ()
 {
 	// Please add extra constructor code here.
+	numCapture = 0;
 }
 
 
@@ -28,10 +29,7 @@ VideoStreamServiceSVC_impl::~VideoStreamServiceSVC_impl ()
 void
 VideoStreamServiceSVC_impl::capture (::CORBA::Long times)
 {
-	// Please insert your code here and remove the following warning pragma
-	#ifndef WIN32
-	#warning "Code missing in function <void VideoStreamServiceSVC_impl::capture(::CORBA::Long times)>"
-	#endif
+	numCapture = times;
 }
 
 
