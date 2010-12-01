@@ -6,7 +6,9 @@ class camera
 	public:
 		camera (unsigned int devId);
 		~camera ();
-		void capture ();
+		char *capture ();
+		double getHeight ();
+		double getWidth ();
 	private:
 		CvCapture * cvCapture;
 		IplImage *frame;

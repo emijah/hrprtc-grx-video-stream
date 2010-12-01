@@ -70,13 +70,21 @@ RTC::ReturnCode_t VideoStream::onInitialize ()
 
 	std::vector < unsigned int >
 		devIds;
+	// TODO get devId from config file
 	//RTC::Properties& prop = getProperties();
 	//coil::stringTo(devIds, prop["camera_dev_id"].c_str());
 	devIds.push_back (0);
 	devIds.push_back (1);
+	m_MultiCameraImages.images.length (devIds.size ());
 	for (unsigned int i = 0; i < devIds.size (); i++)
 	{
-		m_cameras.push_back (new camera (devIds[i]));
+		camera *
+			cam = new camera (devIds[i]);
+		m_cameras.push_back (cam);
+		m_MultiCameraImages.images[i].width = cam->getWidth ();
+		m_MultiCameraImages.images[i].height = cam->getHeight ();
+		m_MultiCameraImages.images[i].pixels.length (cam->getWidth () *
+			cam->getHeight ());
 	}
 
 	return RTC::RTC_OK;
@@ -120,12 +128,17 @@ RTC::ReturnCode_t VideoStream::onExecute (RTC::UniqueId ec_id)
 	{
 		for (unsigned int i = 0; i < m_cameras.size (); i++)
 		{
-			m_cameras[i]->capture ();
+			char *
+				imgFrom = m_cameras[i]->capture ();
+			memcpy (m_MultiCameraImages.images[i].pixels.get_buffer (), imgFrom,
+				m_MultiCameraImages.images[i].pixels.length () *
+				sizeof (char));
 		}
 		if (m_service0.numCapture > 0)
 		{
 			m_service0.numCapture--;
 		}
+		m_MultiCameraImagesOut.write ();
 	}
 	return RTC::RTC_OK;
 }
