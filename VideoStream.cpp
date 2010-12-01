@@ -5,6 +5,7 @@
  * $Id$
  */
 #include "VideoStream.h"
+#include "VectorConvert.h"
 
 // Module specification
 // <rtc-template block="module_spec">
@@ -68,13 +69,10 @@ RTC::ReturnCode_t VideoStream::onInitialize ()
 
 	// </rtc-template>
 
-	std::vector < unsigned int >
+	std::vector < int >
 		devIds;
-	// TODO get devId from config file
-	//RTC::Properties& prop = getProperties();
-	//coil::stringTo(devIds, prop["camera_dev_id"].c_str());
-	devIds.push_back (0);
-	devIds.push_back (1);
+	RTC::Properties & prop = getProperties ();
+	coil::stringTo (devIds, prop["camera_dev_id"].c_str ());
 	m_MultiCameraImages.images.length (devIds.size ());
 	for (unsigned int i = 0; i < devIds.size (); i++)
 	{
