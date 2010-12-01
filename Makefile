@@ -4,9 +4,10 @@ camera.o:camera.cpp
 
 include Makefile.VideoStream
 
+LDFLAGS+= `pkg-config --libs opencv`
 OBJS+=camera.o
 
 VideoStreamService.jar:
-	idlj -I /opt/grx/include/rtm/idl/  VideoStreamService.idl
-	javac *.java
-	jar cvf VideoStreamService.jar *.class
+	idlj -fclient -fserver -emitAll -td src -I /opt/grx/include/rtm/idl/  VideoStreamService.idl
+	javac src/*.java
+	jar cvf VideoStreamService.jar src/*.class -C src
