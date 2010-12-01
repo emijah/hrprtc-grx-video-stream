@@ -67,6 +67,18 @@ RTC::ReturnCode_t VideoStream::onInitialize ()
 	// Bind variables and configuration variable
 
 	// </rtc-template>
+
+	std::vector < unsigned int >
+		devIds;
+	//RTC::Properties& prop = getProperties();
+	//coil::stringTo(devIds, prop["camera_dev_id"].c_str());
+	devIds.push_back (0);
+	devIds.push_back (1);
+	for (unsigned int i = 0; i < devIds.size (); i++)
+	{
+		m_cameras.push_back (new camera (devIds[i]));
+	}
+
 	return RTC::RTC_OK;
 }
 
@@ -101,12 +113,17 @@ RTC::ReturnCode_t VideoStream::onDeactivated(RTC::UniqueId ec_id)
   return RTC::RTC_OK;
 }
 */
-/*
-RTC::ReturnCode_t VideoStream::onExecute(RTC::UniqueId ec_id)
+
+RTC::ReturnCode_t VideoStream::onExecute (RTC::UniqueId ec_id)
 {
-  return RTC::RTC_OK;
+	for (unsigned int i = 0; i < m_cameras.size (); i++)
+	{
+		m_cameras[i]->capture ();
+	}
+	return RTC::RTC_OK;
 }
-*/
+
+
 /*
 RTC::ReturnCode_t VideoStream::onAborting(RTC::UniqueId ec_id)
 {

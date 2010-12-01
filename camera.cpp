@@ -1,17 +1,20 @@
-#include <stdio.h>
-#include <camera.h>
+#include <cstdio>
+#include <boost/lexical_cast.hpp>
+#include "camera.h"
 
-camera::camera ()
+camera::camera (unsigned int devId)
 {
 	width = 320;
 	height = 240;
 	num = 0;
 
-	cvCapture = cvCaptureFromCAM (0);
+	cvCapture = cvCaptureFromCAM (devId);
 	cvSetCaptureProperty (cvCapture, CV_CAP_PROP_FRAME_WIDTH, width);
 	cvSetCaptureProperty (cvCapture, CV_CAP_PROP_FRAME_HEIGHT, height);
+	std::string fname =
+		"cap" + boost::lexical_cast < std::string > (devId) + ".avi";
 	vw =
-		cvCreateVideoWriter ("cap.avi", CV_FOURCC ('X', 'V', 'I', 'D'), 15,
+		cvCreateVideoWriter (fname.c_str (), CV_FOURCC ('X', 'V', 'I', 'D'), 15,
 		cvSize ((int) width, (int) height));
 
 	cvInitFont (&font, CV_FONT_HERSHEY_COMPLEX, 0.7, 0.7);

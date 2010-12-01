@@ -4,7 +4,7 @@
 class camera
 {
 	public:
-		camera ();
+		camera (unsigned int devId);
 		~camera ();
 		void capture ();
 	private:
