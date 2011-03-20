@@ -72,19 +72,25 @@ RTC::ReturnCode_t VideoStream::onInitialize ()
 	RTC::Properties & prop = getProperties ();
 	fileout = coil::toBool (prop["fileout"].c_str (), "YES", "NO", false);
 
-	std::vector < int >
-		devIds;
+	std::vector<int> devIds;
 	coil::stringTo (devIds, prop["camera_dev_id"].c_str ());
+
+	camera::camType cam_t;
+	if(prop["camera_type"]=="UVC" ||prop["camera_type"]=="uvc")
+		cam_t = camera::UVC;
+	else if (prop["camera_type"]=="uEye" ||prop["camera_type"]=="ueye")
+		cam_t = camera::uEye;
+
 	m_MultiCameraImages.images.length (devIds.size ());
 	for (unsigned int i = 0; i < devIds.size (); i++)
 	{
-		camera *
-			cam = new camera (devIds[i], fileout);
+		std::cout  << "** devId:" << devIds[i] << std::endl;
+		camera *cam = new camera (cam_t);
+		cam->init(devIds[i], fileout, devIds.size());
 		m_cameras.push_back (cam);
 		m_MultiCameraImages.images[i].width = cam->getWidth ();
 		m_MultiCameraImages.images[i].height = cam->getHeight ();
-		m_MultiCameraImages.images[i].pixels.length (cam->getWidth () *
-			cam->getHeight ());
+		m_MultiCameraImages.images[i].pixels.length (cam->getWidth () * cam->getHeight () * 3);
 	}
 
 	return RTC::RTC_OK;
@@ -92,34 +98,41 @@ RTC::ReturnCode_t VideoStream::onInitialize ()
 
 
 /*
-RTC::ReturnCode_t VideoStream::onFinalize()
-{
+  RTC::ReturnCode_t VideoStream::onFinalize()
+  {
   return RTC::RTC_OK;
-}
+  }
 */
-/*
+
 RTC::ReturnCode_t VideoStream::onStartup(RTC::UniqueId ec_id)
 {
-  return RTC::RTC_OK;
+
+	for (unsigned int i = 0; i < m_cameras.size (); i++)
+	{
+		m_cameras[i]->start();
+	}
+
+	return RTC::RTC_OK;
 }
+
+
+/*
+  RTC::ReturnCode_t VideoStream::onShutdown(RTC::UniqueId ec_id)
+  {
+  return RTC::RTC_OK;
+  }
 */
 /*
-RTC::ReturnCode_t VideoStream::onShutdown(RTC::UniqueId ec_id)
-{
+  RTC::ReturnCode_t VideoStream::onActivated(RTC::UniqueId ec_id)
+  {
   return RTC::RTC_OK;
-}
+  }
 */
 /*
-RTC::ReturnCode_t VideoStream::onActivated(RTC::UniqueId ec_id)
-{
+  RTC::ReturnCode_t VideoStream::onDeactivated(RTC::UniqueId ec_id)
+  {
   return RTC::RTC_OK;
-}
-*/
-/*
-RTC::ReturnCode_t VideoStream::onDeactivated(RTC::UniqueId ec_id)
-{
-  return RTC::RTC_OK;
-}
+  }
 */
 
 RTC::ReturnCode_t VideoStream::onExecute (RTC::UniqueId ec_id)
@@ -128,18 +141,17 @@ RTC::ReturnCode_t VideoStream::onExecute (RTC::UniqueId ec_id)
 	{
 		for (unsigned int i = 0; i < m_cameras.size (); i++)
 		{
-			char *
-				imgFrom = m_cameras[i]->capture ();
-			memcpy (m_MultiCameraImages.images[i].pixels.get_buffer (), imgFrom,
-				m_MultiCameraImages.images[i].pixels.length () *
-				sizeof (char));
-			std::cout << (unsigned int) imgFrom[1000] << " ";
+			uchar *imgFrom = m_cameras[i]->capture();
+			memcpy (m_MultiCameraImages.images[i].pixels.get_buffer(), imgFrom,
+				m_MultiCameraImages.images[i].pixels.length() * sizeof (uchar));
+			std::cout << "[" << i << "] " << (unsigned int) imgFrom[1000] << " ";
 		}
 		std::cout << std::endl;
 		if (m_service0.numCapture > 0)
 		{
 			m_service0.numCapture--;
 		}
+								 // OutPort
 		m_MultiCameraImagesOut.write ();
 	}
 	return RTC::RTC_OK;
@@ -147,40 +159,39 @@ RTC::ReturnCode_t VideoStream::onExecute (RTC::UniqueId ec_id)
 
 
 /*
-RTC::ReturnCode_t VideoStream::onAborting(RTC::UniqueId ec_id)
-{
+  RTC::ReturnCode_t VideoStream::onAborting(RTC::UniqueId ec_id)
+  {
   return RTC::RTC_OK;
-}
+  }
 */
 /*
-RTC::ReturnCode_t VideoStream::onError(RTC::UniqueId ec_id)
-{
+  RTC::ReturnCode_t VideoStream::onError(RTC::UniqueId ec_id)
+  {
   return RTC::RTC_OK;
-}
+  }
 */
 /*
-RTC::ReturnCode_t VideoStream::onReset(RTC::UniqueId ec_id)
-{
+  RTC::ReturnCode_t VideoStream::onReset(RTC::UniqueId ec_id)
+  {
   return RTC::RTC_OK;
-}
+  }
 */
 /*
-RTC::ReturnCode_t VideoStream::onStateUpdate(RTC::UniqueId ec_id)
-{
+  RTC::ReturnCode_t VideoStream::onStateUpdate(RTC::UniqueId ec_id)
+  {
   return RTC::RTC_OK;
-}
+  }
 */
 /*
-RTC::ReturnCode_t VideoStream::onRateChanged(RTC::UniqueId ec_id)
-{
+  RTC::ReturnCode_t VideoStream::onRateChanged(RTC::UniqueId ec_id)
+  {
   return RTC::RTC_OK;
-}
+  }
 */
 
 extern
 "C"
 {
-
 	void
 		VideoStreamInit (RTC::Manager * manager)
 	{

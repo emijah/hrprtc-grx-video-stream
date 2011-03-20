@@ -1,21 +1,29 @@
 #include <opencv/cv.h>
 #include <opencv/highgui.h>
 
+typedef uint32_t DWORD;
+typedef DWORD HCAM;
+
 class camera
 {
 	public:
-		camera (unsigned int devId, bool fileout = false);
+		typedef enum {uEye, UVC}
+		camType;
+		camera (camType type = uEye);
 		~camera ();
-		char *capture ();
+		int init (unsigned int devId, bool fileout = false, int cam_num=1);
+		void start();
+		uchar *capture ();
 		double getHeight ();
 		double getWidth ();
 	private:
-		CvCapture * cvCapture;
-		IplImage *frame;
-		CvVideoWriter *vw;
-		CvFont font;
-		double width, height;
-		int num;
-		char str[64];
+		HCAM m_hCam;
+		cv::Ptr<cv::VideoCapture> Cap;
+		cv::Mat frame;
+		cv::VideoWriter vw;
+		double width, height, fps;
+		camType type;
+		int num, cam_num;
 		bool fileout;
+		char *m_pcImageMemory;
 };

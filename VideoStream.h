@@ -39,9 +39,7 @@ RTC::DataFlowComponentBase
 
 		// The initialize action (on CREATED->ALIVE transition)
 		// formaer rtc_init_entry()
-		virtual
-			RTC::ReturnCode_t
-			onInitialize ();
+		virtual RTC::ReturnCode_t onInitialize ();
 
 		// The finalize action (on ALIVE->END transition)
 		// formaer rtc_exiting_entry()
@@ -49,7 +47,7 @@ RTC::DataFlowComponentBase
 
 		// The startup action when ExecutionContext startup
 		// former rtc_starting_entry()
-		// virtual RTC::ReturnCode_t onStartup(RTC::UniqueId ec_id);
+		virtual RTC::ReturnCode_t onStartup(RTC::UniqueId ec_id);
 
 		// The shutdown action when ExecutionContext stop
 		// former rtc_stopping_entry()
@@ -102,18 +100,14 @@ RTC::DataFlowComponentBase
 
 		// DataOutPort declaration
 		// <rtc-template block="outport_declare">
-		MultiCameraImages
-			m_MultiCameraImages;
-		OutPort <
-			MultiCameraImages >
-			m_MultiCameraImagesOut;
+		MultiCameraImages m_MultiCameraImages;
+		OutPort<MultiCameraImages> m_MultiCameraImagesOut;
 
 		// </rtc-template>
 
 		// CORBA Port declaration
 		// <rtc-template block="corbaport_declare">
-		RTC::CorbaPort
-			m_VideoStreamServicePort;
+		RTC::CorbaPort m_VideoStreamServicePort;
 
 		// </rtc-template>
 
@@ -130,11 +124,8 @@ RTC::DataFlowComponentBase
 		// </rtc-template>
 
 	private:
-		std::vector <
-			camera * >
-			m_cameras;
-		bool
-			fileout;
+		std::vector < camera * > m_cameras;
+		bool fileout;
 };
 
 extern
