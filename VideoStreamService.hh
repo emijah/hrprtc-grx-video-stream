@@ -20,15 +20,15 @@
 
 #ifndef __BasicDataType_hh_EXTERNAL_GUARD__
 #define __BasicDataType_hh_EXTERNAL_GUARD__
-#include <BasicDataType.hh>
+#include "BasicDataType.hh"
 #endif
 #ifndef __ExtendedDataTypes_hh_EXTERNAL_GUARD__
 #define __ExtendedDataTypes_hh_EXTERNAL_GUARD__
-#include <ExtendedDataTypes.hh>
+#include "ExtendedDataTypes.hh"
 #endif
 #ifndef __InterfaceDataTypes_hh_EXTERNAL_GUARD__
 #define __InterfaceDataTypes_hh_EXTERNAL_GUARD__
-#include <InterfaceDataTypes.hh>
+#include "InterfaceDataTypes.hh"
 #endif
 
 
