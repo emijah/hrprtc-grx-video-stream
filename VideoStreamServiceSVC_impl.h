@@ -13,7 +13,7 @@
 /*
  * Example class implementing IDL interface VideoStreamService
  */
-class VideoStreamServiceSVC_impl:public virtual POA_VideoStreamService,
+class VideoStreamServiceSVC_impl:public virtual POA_OpenHRP::VideoStreamService,
 public virtual
 PortableServer::RefCountServantBase
 {

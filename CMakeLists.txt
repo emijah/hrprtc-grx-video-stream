@@ -30,7 +30,7 @@ include(GenerateStubSkel)
 generate_stub_skel(VideoStreamService)
 generate_hrpsys_stub_skel_wrapper(JointDataTypes)
 
-set(comp_sources VideoStreamServiceSk.cpp VideoStream.cpp camera.cpp)
+set(comp_sources VideoStreamServiceSk.cpp VideoStreamServiceSVC_impl.cpp VideoStream.cpp camera.cpp)
 add_library(VideoStream SHARED ${comp_sources})
 target_link_libraries(VideoStream ${OPENHRP_LIBRARIES})
 set_target_properties(VideoStream PROPERTIES PREFIX "")
