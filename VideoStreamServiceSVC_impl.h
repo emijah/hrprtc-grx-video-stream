@@ -4,11 +4,11 @@
  * @brief Service implementation header of VideoStreamService.idl
  *
  */
-
-#include "VideoStreamServiceSkel.h"
-
 #ifndef VIDEOSTREAMSERVICESVC_IMPL_H
 #define VIDEOSTREAMSERVICESVC_IMPL_H
+
+//#include "VideoStreamServiceSkel.h"
+#include "VideoStreamService.hh"
 
 /*
  * Example class implementing IDL interface VideoStreamService
