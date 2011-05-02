@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.6)
 
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
-option(CMAKE_MODULE_PATH ../../cmake_modules/)
+set(CMAKE_MODULE_PATH ../../cmake_modules/ CACHE STRING "set path to cmake_modules")
 
 ####
 ## settings for OpenRTM and OpenHRP
