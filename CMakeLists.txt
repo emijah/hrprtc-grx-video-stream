@@ -47,8 +47,3 @@ install(TARGETS ${target}
   RUNTIME DESTINATION bin CONFIGURATIONS Release Debug
   LIBRARY DESTINATION lib CONFIGURATIONS Release Debug
 )
-
-if(ENABLE_COMMERCIAL)
-  target_link_libraries(VideoStream certify)
-  target_link_libraries(VideoStreamComp certify)
-endif()
