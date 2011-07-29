@@ -39,7 +39,7 @@ if(NO_COMP)
   set(target VideoStream)
 else()
   add_executable(VideoStreamComp VideoStreamComp.cpp ${comp_sources})
-  target_link_libraries(VideoStreamComp ${OPENHRP_LIBRARIES})
+  target_link_libraries(VideoStreamComp ${OPENHRP_LIBRARIES} cv cvaux ueye_api)
   set(target VideoStream VideoStreamComp)
 endif()
 
