@@ -28,7 +28,7 @@ endif(QNXNTO)
 include(GenerateStubSkel)
 
 generate_stub_skel(VideoStreamService)
-generate_hrpsys_stub_skel_wrapper(JointDataTypes)
+#generate_hrpsys_stub_skel_wrapper(JointDataTypes)
 
 set(comp_sources VideoStreamServiceSk.cpp VideoStreamServiceSVC_impl.cpp VideoStream.cpp camera.cpp)
 add_library(VideoStream SHARED ${comp_sources})
