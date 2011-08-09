@@ -1,12 +1,12 @@
-#!/opt/grx/share/hrpsys/jython/hrpsyspy
+#!/opt/grx/bin/hrpsyspy
 import sys
-import rtm
 sys.path.append('VideoStreamService.jar')
-import VideoStreamServiceHelper
+import rtm
+import OpenHRP.VideoStreamServiceHelper
 
 vs = rtm.findRTC('VideoStream0')
 vs.start()
-vs_svc = VideoStreamServiceHelper.narrow(vs.service('service0'))
+vs_svc = OpenHRP.VideoStreamServiceHelper.narrow(vs.service('service0'))
 
 ## capture 10 times
 ##vs_svc.capture(10)
