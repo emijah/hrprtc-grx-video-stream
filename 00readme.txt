@@ -5,15 +5,32 @@
 
 カメラキャプチャサンプルRTC
 
-コンパイル＆実行方法
-term1$ sudo apt-get install libcv-dev libcvaux-dev
-term1$ tar jxvf VideoStreamRTC.tar.bz2
-term1$ cd ./VideoStreamRTC
-term1$ ./make.sh
-term1$ ./exec.sh
+ソースコード取得方法
+google codeリポジトリから以下のコマンドによりチェックアウトします。
+ term$ hg clone https://code.google.com/p/hrprtc-grx-video-stream/ 
 
-term2$ cd ./VideoStreamRTC
-term2$ ./sample.py
+ソースコードアップデート方法
+上記ソースコード取得方法で再度取得しなおすか、
+以下の方法でアップデートして下さい。
+チェックアウト後(clone後)は、以下の手順で更新できます。
+ term$ cd hrprtc-grx-video-stream
+ term$ hg pull 
+ term$ hg update -C
+-Cはローカルでコードを修正している場合に必要になります。
+
+リポジトリはmercurialというバージョン管理システムを利用しております。
+詳しい利用方法はmercurialのサイトをご覧下さい。
+ http://mercurial.selenic.com/wiki/JapaneseTutorial
+
+
+コンパイル＆実行方法
+ term1$ sudo apt-get install libcv-dev libcvaux-dev
+ term1$ cd hrprtc-grx-video-stream
+ term1$ ./make.sh
+ term1$ ./exec.sh
+
+ term2$ cd hrprtc-grx-video-stream
+ term2$ ./sample.py
 
 
 動作
