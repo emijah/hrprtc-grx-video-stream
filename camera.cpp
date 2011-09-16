@@ -147,7 +147,6 @@ camera::capture ()
 
 	if (type!=UVC)
 	{
-								 // Fix me !
 		cv::waitKey(static_cast<long>(1000/fps/cam_num));
 		//        usleep(1000 * fps/cam_num);
 	}

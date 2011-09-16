@@ -16,7 +16,7 @@
 
 // Service implementation headers
 // <rtc-template block="service_impl_h">
-#include "VideoStreamServiceSVC_impl.h"
+#include "ImgSVC_impl.h"
 
 // </rtc-template>
 
@@ -32,10 +32,11 @@ using namespace RTC;
 class VideoStream:public
 RTC::DataFlowComponentBase
 {
+	friend class CameraCaptureServiceSVC_impl;
+
 	public:
 		VideoStream (RTC::Manager * manager);
-		~
-			VideoStream ();
+		~VideoStream ();
 
 		// The initialize action (on CREATED->ALIVE transition)
 		// formaer rtc_init_entry()
@@ -63,9 +64,7 @@ RTC::DataFlowComponentBase
 
 		// The execution action that is invoked periodically
 		// former rtc_active_do()
-		virtual
-			RTC::ReturnCode_t
-			onExecute (RTC::UniqueId ec_id);
+		virtual RTC::ReturnCode_t onExecute (RTC::UniqueId ec_id);
 
 		// The aborting action when main logic error occurred.
 		// former rtc_aborting_entry()
@@ -87,6 +86,8 @@ RTC::DataFlowComponentBase
 		// no corresponding operation exists in OpenRTm-aist-0.2.0
 		// virtual RTC::ReturnCode_t onRateChanged(RTC::UniqueId ec_id);
 
+		void capture();
+
 	protected:
 		// Configuration variable declaration
 		// <rtc-template block="config_declare">
@@ -100,21 +101,20 @@ RTC::DataFlowComponentBase
 
 		// DataOutPort declaration
 		// <rtc-template block="outport_declare">
-		MultiCameraImages m_MultiCameraImages;
-		OutPort<MultiCameraImages> m_MultiCameraImagesOut;
+		Img::TimedMultiCameraImage m_MultiCameraImages;
+		OutPort<Img::TimedMultiCameraImage> m_MultiCameraImagesOut;
 
 		// </rtc-template>
 
 		// CORBA Port declaration
 		// <rtc-template block="corbaport_declare">
-		RTC::CorbaPort m_VideoStreamServicePort;
+		RTC::CorbaPort m_CameraCaptureServicePort;
 
 		// </rtc-template>
 
 		// Service declaration
 		// <rtc-template block="service_declare">
-		VideoStreamServiceSVC_impl
-			m_service0;
+		CameraCaptureServiceSVC_impl m_service0;
 
 		// </rtc-template>
 

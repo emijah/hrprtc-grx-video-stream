@@ -36,7 +36,6 @@ google codeリポジトリから以下のコマンドによりチェックアウ
 動作
 =====
 
-- ひとまず、/opt/grx/include/rtm/idl/InterfaceDataTypes.idl で定義されているMultiCameraImagesを利用
 - VideoStream.conf
   camera_dev_id:0,1
   を修正する事で、取り扱うカメラの数を変更する．

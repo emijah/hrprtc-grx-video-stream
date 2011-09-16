@@ -16,21 +16,23 @@ include_directories(${OPENHRP_INCLUDE_DIRS})
 link_directories(${OPENHRP_LIBRARY_DIRS})
 include_directories(/opt/grx/include)
 
+set(NO_COMP false)
+
 if(QNXNTO)
   include_directories(/usr/pkg/include)
   set(NO_COMP true)
 else()
 if(UNIX)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D__LINUX__")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D__LINUX__" )
 endif()
 endif(QNXNTO)
 
 include(GenerateStubSkel)
 
-generate_stub_skel(VideoStreamService)
-#generate_hrpsys_stub_skel_wrapper(JointDataTypes)
+#generate_stub_skel(Img)
+generate_hrpsys_stub_skel_wrapper(Img)
 
-set(comp_sources VideoStreamServiceSk.cpp VideoStreamServiceSVC_impl.cpp VideoStream.cpp camera.cpp)
+set(comp_sources ImgSK.cc ImgDynSK.cc ImgSVC_impl.cpp VideoStream.cpp camera.cpp)
 add_library(VideoStream SHARED ${comp_sources})
 target_link_libraries(VideoStream ${OPENHRP_LIBRARIES})
 set_target_properties(VideoStream PROPERTIES PREFIX "")
