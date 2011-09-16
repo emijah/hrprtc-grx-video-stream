@@ -33,7 +33,8 @@ VideoStream::VideoStream (RTC::Manager * manager)
 :
 RTC::DataFlowComponentBase (manager),
 m_MultiCameraImagesOut ("MultiCameraImages", m_MultiCameraImages),
-m_VideoStreamServicePort ("VideoStreamService")
+m_service0(*this),
+m_CameraCaptureServicePort ("CameraCaptureService")
 // </rtc-template>
 {
 }
@@ -54,13 +55,12 @@ RTC::ReturnCode_t VideoStream::onInitialize ()
 	addOutPort ("MultiCameraImages", m_MultiCameraImagesOut);
 
 	// Set service provider to Ports
-	m_VideoStreamServicePort.registerProvider ("service0", "VideoStreamService",
-		m_service0);
+	m_CameraCaptureServicePort.registerProvider ("service0", "CameraCaptureService", m_service0);
 
 	// Set service consumers to Ports
 
 	// Set CORBA Service Ports
-	addPort (m_VideoStreamServicePort);
+	addPort (m_CameraCaptureServicePort);
 
 	// </rtc-template>
 
@@ -81,16 +81,16 @@ RTC::ReturnCode_t VideoStream::onInitialize ()
 	else if (prop["camera_type"]=="uEye" ||prop["camera_type"]=="ueye")
 		cam_t = camera::uEye;
 
-	m_MultiCameraImages.images.length (devIds.size ());
+	m_MultiCameraImages.data.image_seq.length (devIds.size ());
 	for (unsigned int i = 0; i < devIds.size (); i++)
 	{
 		std::cout  << "** devId:" << devIds[i] << std::endl;
 		camera *cam = new camera (cam_t);
 		cam->init(devIds[i], fileout, devIds.size());
 		m_cameras.push_back (cam);
-		m_MultiCameraImages.images[i].width = cam->getWidth ();
-		m_MultiCameraImages.images[i].height = cam->getHeight ();
-		m_MultiCameraImages.images[i].pixels.length (cam->getWidth () * cam->getHeight () * 3);
+		m_MultiCameraImages.data.image_seq[i].image.width = cam->getWidth ();
+		m_MultiCameraImages.data.image_seq[i].image.height = cam->getHeight ();
+		m_MultiCameraImages.data.image_seq[i].image.raw_data.length (cam->getWidth () * cam->getHeight () * 3);
 	}
 
 	return RTC::RTC_OK;
@@ -108,9 +108,7 @@ RTC::ReturnCode_t VideoStream::onStartup(RTC::UniqueId ec_id)
 {
 
 	for (unsigned int i = 0; i < m_cameras.size (); i++)
-	{
 		m_cameras[i]->start();
-	}
 
 	return RTC::RTC_OK;
 }
@@ -137,26 +135,30 @@ RTC::ReturnCode_t VideoStream::onStartup(RTC::UniqueId ec_id)
 
 RTC::ReturnCode_t VideoStream::onExecute (RTC::UniqueId ec_id)
 {
-	if (m_service0.numCapture != 0)
+	/*if (m_service0.numCapture != 0)
 	{
-		for (unsigned int i = 0; i < m_cameras.size (); i++)
-		{
-			uchar *imgFrom = m_cameras[i]->capture();
-			memcpy (m_MultiCameraImages.images[i].pixels.get_buffer(), imgFrom,
-				m_MultiCameraImages.images[i].pixels.length() * sizeof (uchar));
-			std::cout << "[" << i << "] " << (unsigned int) imgFrom[1000] << " ";
-		}
-		std::cout << std::endl;
+		capture();
 		if (m_service0.numCapture > 0)
-		{
 			m_service0.numCapture--;
-		}
-								 // OutPort
 		m_MultiCameraImagesOut.write ();
-	}
+	}*/
 	return RTC::RTC_OK;
 }
 
+void VideoStream::capture()
+{
+	m_MultiCameraImages.error_code = 0;
+	for (unsigned int i = 0; i < m_cameras.size (); i++)
+	{
+		m_MultiCameraImages.data.image_seq[i].image.format = Img::CF_RGB;
+		m_MultiCameraImages.data.camera_set_id = 0;
+		uchar *imgFrom = m_cameras[i]->capture();
+		memcpy (m_MultiCameraImages.data.image_seq[i].image.raw_data.get_buffer(), imgFrom,
+			m_MultiCameraImages.data.image_seq[i].image.raw_data.length() * sizeof (uchar));
+		std::cout << "[" << i << "] " << (unsigned int) imgFrom[1000] << " ";
+	}
+	std::cout << std::endl;
+}
 
 /*
   RTC::ReturnCode_t VideoStream::onAborting(RTC::UniqueId ec_id)
@@ -192,14 +194,11 @@ RTC::ReturnCode_t VideoStream::onExecute (RTC::UniqueId ec_id)
 extern
 "C"
 {
-	void
-		VideoStreamInit (RTC::Manager * manager)
+	void VideoStreamInit (RTC::Manager * manager)
 	{
 		coil::Properties profile (videostream_spec);
-		manager->
-			registerFactory (profile,
+		manager->registerFactory (profile,
 			RTC::Create < VideoStream >,
 			RTC::Delete < VideoStream >);
 	}
-
 };
