@@ -131,11 +131,16 @@ uchar *
 camera::capture ()
 {
     if(type==UVC)
+    {
         *Cap >> frame;
+        *Cap >> frame;
+        *Cap >> frame;
+        *Cap >> frame;
+        *Cap >> frame;
+    }
     else
         frame.data = (uchar*)m_pcImageMemory;
 
-    fileout = true;
     if (fileout)
     {
         std::stringstream interpreter;
