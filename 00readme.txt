@@ -46,9 +46,7 @@ google codeリポジトリから以下のコマンドによりチェックアウ
   sample.py は，デフォルトで10秒間の連続キャプチャを行う．
 
 - captureコマンド
-  -- capture(-1)：キャプチャ開始
-  -- capture(0)：キャプチャ終了
-  -- capture(n>0)：n回キャプチャ
+  -- take_one_frame() : 静止画をoutportに出力する
 
 
 注意事項
