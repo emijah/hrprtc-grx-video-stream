@@ -7,7 +7,7 @@
 #include "camera.h"
 
 camera::camera (camType cam_t)
-    : width(640), height(480), fps(30), num(0), type(cam_t)
+    : width(640), height(480), fps(2), num(0), type(cam_t)
 {
 }
 
