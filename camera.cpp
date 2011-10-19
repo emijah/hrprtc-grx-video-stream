@@ -33,6 +33,19 @@ camera::init(unsigned int devId, bool _fileout, int _cam_num)
         if(_fps>0) fps = _fps;
         std::cout << "w:" << width << ", h:" << height << std::endl;
 
+        //std::cout << "FORMAT:" << Cap->get(CV_CAP_PROP_FORMAT)         << std::endl;
+        //std::cout << "MODE:"   << Cap->get(CV_CAP_PROP_MODE) 	       << std::endl;
+        brightness = Cap->get(CV_CAP_PROP_BRIGHTNESS);
+        contrast   = Cap->get(CV_CAP_PROP_CONTRAST);
+        saturation = Cap->get(CV_CAP_PROP_SATURATION);
+        hue        = Cap->get(CV_CAP_PROP_HUE);
+        std::cout << "BRIGHTNESS:" << brightness << std::endl;
+        std::cout << "CONTRAST:"   << contrast   << std::endl;
+        std::cout << "SATURATION:" << saturation << std::endl;
+        std::cout << "HUE:"        << hue        << std::endl;
+        //std::cout << "GAIN:"       << Cap->get(CV_CAP_PROP_GAIN)       << std::endl;
+        //std::cout << "CONVERT_RGB:"<< Cap->get(CV_CAP_PROP_CONVERT_RGB)<< std::endl;
+
         if(!Cap->isOpened())
             return -1;
         frame = cv::Mat(height, width, CV_8UC3);
@@ -171,4 +184,46 @@ double
 camera::getHeight ()
 {
     return height;
+}
+
+bool
+camera::updateBrightness(float _brightness)
+{
+    if (brightness != _brightness) {
+        brightness = _brightness;
+        Cap->set(CV_CAP_PROP_BRIGHTNESS, brightness);
+        return true;
+    }
+    return false;
+}
+
+bool 
+camera::updateContrast(float _contrast)
+{
+    if (contrast != _contrast) {
+        contrast = _contrast;
+        Cap->set(CV_CAP_PROP_CONTRAST, contrast);
+        return true;
+    }
+    return false;
+}
+
+bool camera::updateSaturation(float _saturation)
+{
+    if (saturation != _saturation) {
+        saturation = _saturation;
+        Cap->set(CV_CAP_PROP_SATURATION, saturation);
+        return false;
+    }
+    return false;
+}
+
+bool camera::updateHue(float _hue)
+{
+    if (hue != _hue) {
+        hue = _hue;
+        Cap->set(CV_CAP_PROP_HUE, hue);
+        return false;
+    }
+    return false;
 }

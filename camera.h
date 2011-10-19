@@ -16,12 +16,22 @@ public:
     uchar *capture ();
     double getHeight ();
     double getWidth ();
+
+    bool updateBrightness(float brightness);
+    bool updateContrast(float Contrast);
+    bool updateSaturation(float Saturation);
+    bool updateHue(float hue);
+    float  brightness;
+    float  contrast;
+    float  saturation;
+    float  hue;
 private:
     HCAM m_hCam;
     cv::Ptr<cv::VideoCapture> Cap;
     cv::Mat frame;
     cv::VideoWriter vw;
     double width, height, fps;
+
     camType type;
     int num, cam_num;
     bool fileout;
