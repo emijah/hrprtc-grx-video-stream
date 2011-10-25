@@ -4,6 +4,13 @@ sys.path.append('Img.jar')
 import rtm
 import Img.CameraCaptureServiceHelper
 
+vs_svc = None
+# VideoStream Service Port
+vs_port = None
+# VideoStream Data Port
+md_port = None
+# MultiCameraImage Data Port
+
 def init():
   global vs_svc, vs_port, md_port
   vs = rtm.findRTC('VideoStream0')
@@ -15,12 +22,14 @@ def init():
   md = rtm.findRTC('MultiDisp0')
   if md != None:
     md_port = md.port('images')
-    #rtm.connectPorts(vs_port, md_port)
+    rtm.connectPorts(vs_port, md_port)
     md.start()
 
 def take_one_frame():
+  global md_port
   vs_svc.take_one_frame()
   dat = rtm.readDataPort(vs_port, classname='Img.TimedMultiCameraImageHolder')
+  print dat	
   print dat.data
   if md_port != None:
     rtm.writeDataPort(md_port, dat)
