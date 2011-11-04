@@ -201,9 +201,9 @@ void VideoStream::capture()
         uchar *imgFrom = m_cameras[i]->capture();
         memcpy (m_MultiCameraImages.data.image_seq[i].image.raw_data.get_buffer(), imgFrom,
                 m_MultiCameraImages.data.image_seq[i].image.raw_data.length() * sizeof (uchar));
-        std::cout << "[" << i << "] " << (unsigned int) imgFrom[1000] << " ";
+        //std::cout << "[" << i << "] " << (unsigned int) imgFrom[1000] << " ";
     }
-    std::cout << std::endl;
+    //std::cout << std::endl;
 }
 
 /*
