@@ -53,7 +53,7 @@ camera::init(unsigned int devId, bool _fileout, int _cam_num)
     }
     else
     {
-        m_hCam = static_cast<HCAM>(0);
+        m_hCam = static_cast<HCAM>(devId);
         CAMINFO m_ci;
         INT nRet = is_InitCamera(&m_hCam, &m_ci);
         if(nRet != IS_SUCCESS)
