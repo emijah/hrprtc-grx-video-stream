@@ -87,8 +87,8 @@ RTC::ReturnCode_t VideoStream::onInitialize ()
         cam_t = camera::UVC;
     else if (prop["camera_type"]=="uEye" ||prop["camera_type"]=="ueye")
         cam_t = camera::uEye;
-    else if (prop["camera_type"]=="RAW" ||prop["camera_type"]=="raw")
-        cam_t = camera::RAW;
+    //else if (prop["camera_type"]=="RAW" ||prop["camera_type"]=="raw")
+    //    cam_t = camera::RAW;
 
     m_MultiCameraImages.data.image_seq.length (devIds.size ());
     for (unsigned int i = 0; i < devIds.size (); i++)
