@@ -54,7 +54,8 @@ google codeリポジトリから以下のコマンドによりチェックアウ
   #camera_dev_id:1,2
 
  *インストール直後はcamera id が全て1のままであり、camera_dev_idには0しか指定できない。
-　2つ同時に利用する場合は0,0と指定する。
+  0を指定すると、未使用のデバイスをデバイスidが小さい順に利用する。
+　同じrtcから2つ同時に利用する場合は0,0と指定する。
   QuEyeCameraManagerによりidは変更可能。
   ueyeカメラドライバのreadmeにあるueyesetidはモニタ機能しかつかえない(ver3.7にて確認)。
   <<ueyesetid の実行例>>
