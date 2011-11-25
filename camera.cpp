@@ -16,12 +16,88 @@ camera::~camera ()
 {
 }
 
+#define RGB_VALID(x) ((x) < 0) ? 0 : (((x)>255) ? 255 : (x))
+unsigned char *
+camera::yuv2rgb(unsigned char *yuv,unsigned char *rgb_buf,int width,int height){
+    int i,j;
+    unsigned char *y=yuv;
+    unsigned char *u=y + width * height;
+    unsigned char *v=u + width * height / 4;
+    unsigned char *d = rgb_buf;
+    unsigned char *us,*vs;
+
+    for(i = 0; height > i; i++) {
+        // us,vsはrgbの４画素に使用する
+        us = u; vs = v;
+        for(j = 0; width > j; j += 2) { // step by 2pixel
+            int r, g, b, u0, v0, y0, cr, cg, cb;
+            u0 = -128 + *u++;
+            v0 = -128 + *v++;
+
+            // 変換式を512倍したもの(整数演算するため)
+            cr = 718 * v0;
+            cg = -176 * u0 - 366 * v0;
+            cb = 906 * u0;
+
+            y0 = (*y++) << 9;
+            r =(y0 + cr)>> 9;
+            g =(y0 + cg)>> 9;
+            b =(y0 + cb)>> 9;
+            *d++ = RGB_VALID(r);
+            *d++ = RGB_VALID(g);
+            *d++ = RGB_VALID(b);
+
+            y0 =  (*y++) << 9;
+            r =(y0 + cr)>> 9;
+            g =(y0 + cg)>> 9;
+            b =(y0 + cb)>> 9;
+            *d++ = RGB_VALID(r);
+            *d++ = RGB_VALID(g);
+            *d++ = RGB_VALID(b);
+        }
+        if( (i % 2) ==0) {
+            u = us; v = vs;
+        }
+    }
+    return rgb_buf;
+}
 
 int
 camera::init(unsigned int devId, bool _fileout, int _cam_num)
 {
     cam_num = _cam_num;
-    if(type==UVC)
+    if(type==RAW)
+    {
+        FILE *fp;
+        /* 明るさ、色、コントラスト、ホワイトネスを決め打ちする*/
+        vp.brightness=32767;
+        vp.hue=32767;
+        vp.colour=32767;
+        vp.contrast=32767;
+        vp.whiteness=32767;
+        vp.depth=24;            /* color depth */
+        vp.palette=VIDEO_PALETTE_YUV420P; /* パレット形式 */
+        if(ioctl(fd, VIDIOCSPICT, &vp)) {
+            perror("ioctl(VIDIOCSPICT)");
+            return -1;
+        }
+
+        /* mmap 情報の取得 */
+        if(ioctl(fd, VIDIOCGMBUF, &vm)<0) {
+            perror("ioctl(VIDIOCGMBUF)");
+            return -1;
+        }
+
+        /* mmap */
+        if((map=(unsigned char *)mmap(0, vm.size,
+                                      PROT_READ|PROT_WRITE,
+                                      MAP_SHARED,
+                                      fd, 0))==(unsigned char *)-1) {
+            perror("mmap");
+            return -1;
+        }
+    }
+    else if(type==UVC)
     {
         std::cout << "devID:" << devId << std::endl;
         Cap = new cv::VideoCapture(devId);
@@ -34,7 +110,7 @@ camera::init(unsigned int devId, bool _fileout, int _cam_num)
         std::cout << "w:" << width << ", h:" << height << std::endl;
 
         //std::cout << "FORMAT:" << Cap->get(CV_CAP_PROP_FORMAT)         << std::endl;
-        //std::cout << "MODE:"   << Cap->get(CV_CAP_PROP_MODE) 	       << std::endl;
+        //std::cout << "MODE:"   << Cap->get(CV_CAP_PROP_MODE)         << std::endl;
         brightness = Cap->get(CV_CAP_PROP_BRIGHTNESS);
         contrast   = Cap->get(CV_CAP_PROP_CONTRAST);
         saturation = Cap->get(CV_CAP_PROP_SATURATION);
@@ -143,7 +219,28 @@ camera::start()
 uchar *
 camera::capture ()
 {
-    if(type==UVC)
+    if(type==RAW)
+    {
+        /* キャプチャ開始 */
+        vmm.frame=0;
+        vmm.width=width;
+        vmm.height=height;
+        vmm.format=VIDEO_PALETTE_YUV420P;
+        if(ioctl(fd, VIDIOCMCAPTURE, &vmm)<0) {
+            perror("ioctl(VIDIOCMCAPTURE)");
+            return NULL;
+        }
+
+
+        /*  キャプチャ終了待ち */
+        n=0;
+        if(ioctl(fd, VIDIOCSYNC, &n)<0) {
+            perror("ioctl(VIDIOCSYNC)");
+            return NULL;
+        }
+        yuv2rgb(map+vm.offsets[0], frame.data, width, height);
+    }
+    else if(type==UVC)
     {
         *Cap >> frame;
         *Cap >> frame;
@@ -197,7 +294,7 @@ camera::updateBrightness(float _brightness)
     return false;
 }
 
-bool 
+bool
 camera::updateContrast(float _contrast)
 {
     if (contrast != _contrast) {
