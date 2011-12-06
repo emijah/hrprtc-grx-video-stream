@@ -33,7 +33,13 @@ include(GenerateStubSkel)
 #generate_stub_skel(Img)
 generate_hrpsys_stub_skel_wrapper(Img)
 
+generate_stub_skel_cpp(/opt/grx/share/OpenHRP-3.1/idl/OpenHRP/OpenHRPCommon)
+generate_stub_skel_cpp(/opt/grx/share/OpenHRP-3.1/idl/OpenHRP/ModelLoader)
+generate_stub_skel_cpp(/opt/grx/share/OpenHRP-3.1/idl/OpenHRP/World)
+generate_stub_skel_cpp(/opt/grx/share/OpenHRP-3.1/idl/OpenHRP/ViewSimulator)
+
 set(comp_sources ImgSK.cc ImgDynSK.cc ImgSVC_impl.cpp VideoStream.cpp camera.cpp)
+set(comp_sources ${comp_sources} OpenHRPCommonSk.cpp ModelLoaderSk.cpp WorldSk.cpp ViewSimulatorSk.cpp)
 add_library(VideoStream SHARED ${comp_sources})
 target_link_libraries(VideoStream ${OPENHRP_LIBRARIES})
 set_target_properties(VideoStream PROPERTIES PREFIX "")

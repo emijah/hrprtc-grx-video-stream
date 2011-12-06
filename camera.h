@@ -10,17 +10,19 @@
 #include <linux/types.h>
 #include <linux/videodev.h>
 
+#include "ViewSimulator.hh"
+
 typedef uint32_t DWORD;
 typedef DWORD HCAM;
 
 class camera
 {
 public:
-    typedef enum {uEye, UVC, RAW}
+    typedef enum {uEye, UVC, RAW, HRP}
     camType;
     camera (camType type = uEye);
     ~camera ();
-    int init (unsigned int devId, bool fileout = false, int cam_num=1);
+    int init (unsigned int devId, bool fileout = false, int cam_num=1, CORBA::ORB_ptr orb = NULL);
     void start();
     uchar *capture ();
     double getHeight ();
@@ -53,4 +55,5 @@ private:
     unsigned char *map;
     unsigned char * yuv2rgb(unsigned char *yuv,unsigned char *rgb_buf,int width,int height);
 
+    OpenHRP::Camera_var virtualCamera;
 };
