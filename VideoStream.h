@@ -127,8 +127,8 @@ private:
     std::vector < camera * > m_cameras;
     bool fileout;
 
-    bool   m_update_params;
-    int   m_camera_id;
+    bool m_update_params;
+    int m_camera_id;
     float m_brightness;
     float m_contrast;
     float m_saturation;

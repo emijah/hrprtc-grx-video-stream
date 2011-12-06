@@ -21,10 +21,10 @@ public:
     bool updateContrast(float Contrast);
     bool updateSaturation(float Saturation);
     bool updateHue(float hue);
-    float  brightness;
-    float  contrast;
-    float  saturation;
-    float  hue;
+    float brightness;
+    float contrast;
+    float saturation;
+    float hue;
 private:
     HCAM m_hCam;
     cv::Ptr<cv::VideoCapture> Cap;
