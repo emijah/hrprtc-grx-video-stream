@@ -34,7 +34,7 @@ camera::init(unsigned int devId, bool _fileout, int _cam_num)
         std::cout << "w:" << width << ", h:" << height << std::endl;
 
         //std::cout << "FORMAT:" << Cap->get(CV_CAP_PROP_FORMAT)         << std::endl;
-        //std::cout << "MODE:"   << Cap->get(CV_CAP_PROP_MODE) 	       << std::endl;
+        //std::cout << "MODE:"   << Cap->get(CV_CAP_PROP_MODE)         << std::endl;
         brightness = Cap->get(CV_CAP_PROP_BRIGHTNESS);
         contrast   = Cap->get(CV_CAP_PROP_CONTRAST);
         saturation = Cap->get(CV_CAP_PROP_SATURATION);
@@ -197,7 +197,7 @@ camera::updateBrightness(float _brightness)
     return false;
 }
 
-bool 
+bool
 camera::updateContrast(float _contrast)
 {
     if (contrast != _contrast) {
