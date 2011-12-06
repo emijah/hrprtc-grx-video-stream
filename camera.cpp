@@ -63,10 +63,32 @@ camera::yuv2rgb(unsigned char *yuv,unsigned char *rgb_buf,int width,int height){
 }
 
 int
-camera::init(unsigned int devId, bool _fileout, int _cam_num)
+camera::init(unsigned int devId, bool _fileout, int _cam_num, CORBA::ORB_ptr orb)
 {
     cam_num = _cam_num;
-    if(type==RAW)
+    if ( type == HRP )
+    {
+        //if (virtualCamera == NULL)
+        //{
+        try {
+            CORBA::Object_var obj = orb->resolve_initial_references("NameService");
+            CosNaming::NamingContext_var cxt;
+            cxt = CosNaming::NamingContext::_narrow(obj);
+            CosNaming::Name ncName;
+            ncName.length(1);
+            ncName[0].id   = CORBA::string_dup("ViewSimulator");
+            ncName[0].kind = CORBA::string_dup("");
+            OpenHRP::ViewSimulator_var viewSim = OpenHRP::ViewSimulator::_narrow(cxt->resolve(ncName));
+            OpenHRP::CameraSequence_var cs;
+            viewSim->getCameraSequence(cs);
+            virtualCamera = cs[devId];
+        } catch (const CORBA::ORB::InvalidName&) {
+            std::cerr << "can't resolve NameService" << std::endl;
+        }
+        //}
+        frame = cv::Mat(height, width, CV_8UC3);
+    }
+    else if ( type == RAW )
     {
         FILE *fp;
         /* 明るさ、色、コントラスト、ホワイトネスを決め打ちする*/
@@ -97,7 +119,7 @@ camera::init(unsigned int devId, bool _fileout, int _cam_num)
             return -1;
         }
     }
-    else if(type==UVC)
+    else if ( type == UVC )
     {
         std::cout << "devID:" << devId << std::endl;
         Cap = new cv::VideoCapture(devId);
@@ -210,7 +232,7 @@ camera::init(unsigned int devId, bool _fileout, int _cam_num)
 void
 camera::start()
 {
-    if(type!=UVC)
+    if(type==uEye)
         // capture start
         int nRet = is_CaptureVideo(m_hCam, IS_DONT_WAIT);
 }
@@ -219,7 +241,21 @@ camera::start()
 uchar *
 camera::capture ()
 {
-    if(type==RAW)
+    if(type==HRP)
+    {
+        OpenHRP::ImageData_var dat = virtualCamera->getImageData();
+        frame.cols = dat->width;
+        frame.rows = dat->height;
+        for (int row=0; row<dat->height; ++row) {
+            for (int col=0; col<dat->width; ++col) {
+                for (int k=0; k<3; ++k) {
+                    //frame.data[row * frame.cols + col*3 + k] = dat->longData[row * dat->width + col] >> 8*k;
+                    frame.data[row * frame.step + col*3 + k] = dat->longData[row * dat->width + col] >> 8*k;
+                }
+            }
+        }
+    }
+    else if(type==RAW)
     {
         /* キャプチャ開始 */
         vmm.frame=0;
@@ -260,7 +296,7 @@ camera::capture ()
     }
     num++;
 
-    if (type!=UVC)
+    if (type==uEye)
     {
         cv::waitKey(static_cast<long>(1000/fps/cam_num));
         //        usleep(1000 * fps/cam_num);

@@ -27,9 +27,9 @@ static const char *videostream_spec[] =
     "conf.default.update_params","0",
     "conf.default.camera_id",    "0",
     "conf.default.brightness", "0.5",
-//    "conf.default.contrast",   "0.5",
-//    "conf.default.saturation", "0.5",
-//    "conf.default.hue",        "0.5",
+    //    "conf.default.contrast",   "0.5",
+    //    "conf.default.saturation", "0.5",
+    //    "conf.default.hue",        "0.5",
     ""
 };
 
@@ -87,15 +87,17 @@ RTC::ReturnCode_t VideoStream::onInitialize ()
         cam_t = camera::UVC;
     else if (prop["camera_type"]=="uEye" ||prop["camera_type"]=="ueye")
         cam_t = camera::uEye;
-    //else if (prop["camera_type"]=="RAW" ||prop["camera_type"]=="raw")
-    //    cam_t = camera::RAW;
+    else if (prop["camera_type"]=="HRP" ||prop["camera_type"]=="hrp")
+        cam_t = camera::HRP;
+    else if (prop["camera_type"]=="RAW" ||prop["camera_type"]=="raw")
+        cam_t = camera::RAW;
 
     m_MultiCameraImages.data.image_seq.length (devIds.size ());
     for (unsigned int i = 0; i < devIds.size (); i++)
     {
         std::cout << "** devId:" << devIds[i] << std::endl;
         camera *cam = new camera (cam_t);
-        cam->init(devIds[i], fileout, devIds.size());
+        cam->init(devIds[i], fileout, devIds.size(), m_pORB);
         m_cameras.push_back (cam);
         m_MultiCameraImages.data.image_seq[i].image.width = cam->getWidth ();
         m_MultiCameraImages.data.image_seq[i].image.height = cam->getHeight ();
@@ -104,33 +106,33 @@ RTC::ReturnCode_t VideoStream::onInitialize ()
     bindParameter("update_params",  m_update_params,"0");
     bindParameter("camera_id",  m_camera_id,    "0");
     bindParameter("brightness", m_brightness, "0.5");
-//    bindParameter("saturation", m_saturation, "0.5");
-//    bindParameter("contrast",   m_contrast,   "0.5");
-//    bindParameter("hue",        m_hue,        "0.5");
-    
-/*    SDOPackage::Configuration_var config = this->getObjRef()->get_configuration();
-    SDOPackage::ConfigurationSet_var aset = config->get_active_configuration_set();
-    NVList activeData = aset->configuration_data;
-    for (int i=0; i<activeData.length(); i++) {
-        CORBA::Any anyval;
-        if (strcmp(activeData[i].name,"brightness") == 0) 
-            anyval <<= m_cameras[0]->brightness;
-        else if (strcmp(activeData[i].name, "saturation") == 0)
-            anyval <<= m_cameras[0]->saturation;
-        else if (strcmp(activeData[i].name, "contrast") == 0) 
-            anyval <<= m_cameras[0]->contrast;
-        else if (strcmp(activeData[i].name, "hue") == 0)
-            anyval <<= m_cameras[0]->hue;
-        else 
-            continue;
-        //activeData[i].value = anyval;
-        float val;
-        activeData[i].value >>= val;
-        std::cout << activeData[i].name << ":" << val << std::endl;
-        config->set_configuration_set_values(aset);
-    }
-    config->activate_configuration_set(aset->id);
- */   
+    //    bindParameter("saturation", m_saturation, "0.5");
+    //    bindParameter("contrast",   m_contrast,   "0.5");
+    //    bindParameter("hue",        m_hue,        "0.5");
+
+    /*    SDOPackage::Configuration_var config = this->getObjRef()->get_configuration();
+        SDOPackage::ConfigurationSet_var aset = config->get_active_configuration_set();
+        NVList activeData = aset->configuration_data;
+        for (int i=0; i<activeData.length(); i++) {
+            CORBA::Any anyval;
+            if (strcmp(activeData[i].name,"brightness") == 0)
+                anyval <<= m_cameras[0]->brightness;
+            else if (strcmp(activeData[i].name, "saturation") == 0)
+                anyval <<= m_cameras[0]->saturation;
+            else if (strcmp(activeData[i].name, "contrast") == 0)
+                anyval <<= m_cameras[0]->contrast;
+            else if (strcmp(activeData[i].name, "hue") == 0)
+                anyval <<= m_cameras[0]->hue;
+            else
+                continue;
+            //activeData[i].value = anyval;
+            float val;
+            activeData[i].value >>= val;
+            std::cout << activeData[i].name << ":" << val << std::endl;
+            config->set_configuration_set_values(aset);
+        }
+        config->activate_configuration_set(aset->id);
+     */
     return RTC::RTC_OK;
 }
 
@@ -160,10 +162,10 @@ RTC::ReturnCode_t VideoStream::onStartup(RTC::UniqueId ec_id)
  */
 
 
-   RTC::ReturnCode_t VideoStream::onActivated(RTC::UniqueId ec_id)
-   {
-   return RTC::RTC_OK;
-   }
+RTC::ReturnCode_t VideoStream::onActivated(RTC::UniqueId ec_id)
+{
+    return RTC::RTC_OK;
+}
 
 
 /*
@@ -178,9 +180,9 @@ RTC::ReturnCode_t VideoStream::onExecute (RTC::UniqueId ec_id)
     if (m_update_params)
     {
         m_cameras[m_camera_id]->updateBrightness(m_brightness);
-//        m_cameras[m_camera_id]->updateContrast(m_contrast);
-//        m_cameras[m_camera_id]->updateSaturation(m_saturation);
-//        m_cameras[m_camera_id]->updateHue(m_hue);
+        //        m_cameras[m_camera_id]->updateContrast(m_contrast);
+        //        m_cameras[m_camera_id]->updateSaturation(m_saturation);
+        //        m_cameras[m_camera_id]->updateHue(m_hue);
     }
 
     /*if (m_service0.numCapture != 0)
