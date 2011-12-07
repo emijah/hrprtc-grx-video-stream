@@ -45,6 +45,7 @@ private:
 
     camType type;
     int num, cam_num;
+    unsigned int devId;
     bool fileout;
     char *m_pcImageMemory;
 
@@ -55,5 +56,6 @@ private:
     unsigned char *map;
     unsigned char * yuv2rgb(unsigned char *yuv,unsigned char *rgb_buf,int width,int height);
 
+    OpenHRP::ViewSimulator_var viewSimulator;
     OpenHRP::Camera_var virtualCamera;
 };
