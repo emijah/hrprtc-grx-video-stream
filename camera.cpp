@@ -184,12 +184,26 @@ camera::init(unsigned int _devId, bool _fileout, int _cam_num, CORBA::ORB_ptr or
         nRet = is_SetSubSampling(m_hCam, IS_SUBSAMPLING_2X_VERTICAL | IS_SUBSAMPLING_2X_HORIZONTAL);
         std::cout << "sub:" << nRet << std::endl;
         int aoi_x=0, aoi_y=0, aoi_w=width, aoi_h=height;
+#if UEYE_VERSION(3, 82, 0) < UEYE_VERSION_CODE
+        IS_RECT rectAOI;
+        rectAOI.s32X = aoi_x;
+        rectAOI.s32Y = aoi_y;
+        rectAOI.s32Width  = aoi_w;
+        rectAOI.s32Height = aoi_h;
+        nRet = is_AOI(m_hCam, IS_AOI_IMAGE_SET_AOI, (void *)&rectAOI, sizeof(rectAOI));
+#else
         nRet = is_SetAOI(m_hCam, IS_SET_IMAGE_AOI, &aoi_x, &aoi_y, &aoi_w, &aoi_h);
+#endif
         std::cout << "aoi:" << nRet << std::endl;
         nRet = is_SetFrameRate(m_hCam, fps, &fps);
         std::cout << "fps:" << nRet << ", new_fps=" << fps << std::endl;
         double new_exp = 0.0;
+#if UEYE_VERSION(3, 82, 0) < UEYE_VERSION_CODE
+        nRet = is_SetAutoParameter(m_hCam, IS_SET_ENABLE_AUTO_SHUTTER, 1);
+        nRet = is_Exposure(m_hCam, IS_EXPOSURE_CMD_GET_EXPOSURE, &new_exp);
+#else
         nRet = is_SetExposureTime(m_hCam, IS_SET_ENABLE_AUTO_SHUTTER, &new_exp);
+#endif
         std::cout << "exposure:" << nRet << ", new_exp=" << new_exp << std::endl;
         m_nSizeX = aoi_w;
         m_nSizeY = aoi_h;
@@ -257,6 +271,7 @@ camera::capture ()
                 }
             }
         } catch (...) {
+            OpenHRP::CameraSequence_var cs;
             viewSimulator->getCameraSequence(cs);
             virtualCamera = cs[devId];
         }
