@@ -63,9 +63,10 @@ camera::yuv2rgb(unsigned char *yuv,unsigned char *rgb_buf,int width,int height){
 }
 
 int
-camera::init(unsigned int devId, bool _fileout, int _cam_num, CORBA::ORB_ptr orb)
+camera::init(unsigned int _devId, bool _fileout, int _cam_num, CORBA::ORB_ptr orb)
 {
     cam_num = _cam_num;
+    devId = _devId;
     if ( type == HRP )
     {
         //if (virtualCamera == NULL)
@@ -78,9 +79,9 @@ camera::init(unsigned int devId, bool _fileout, int _cam_num, CORBA::ORB_ptr orb
             ncName.length(1);
             ncName[0].id   = CORBA::string_dup("ViewSimulator");
             ncName[0].kind = CORBA::string_dup("");
-            OpenHRP::ViewSimulator_var viewSim = OpenHRP::ViewSimulator::_narrow(cxt->resolve(ncName));
+            viewSimulator = OpenHRP::ViewSimulator::_narrow(cxt->resolve(ncName));
             OpenHRP::CameraSequence_var cs;
-            viewSim->getCameraSequence(cs);
+            viewSimulator->getCameraSequence(cs);
             virtualCamera = cs[devId];
         } catch (const CORBA::ORB::InvalidName&) {
             std::cerr << "can't resolve NameService" << std::endl;
@@ -243,16 +244,21 @@ camera::capture ()
 {
     if(type==HRP)
     {
-        OpenHRP::ImageData_var dat = virtualCamera->getImageData();
-        frame.cols = dat->width;
-        frame.rows = dat->height;
-        for (int row=0; row<dat->height; ++row) {
-            for (int col=0; col<dat->width; ++col) {
-                for (int k=0; k<3; ++k) {
-                    //frame.data[row * frame.cols + col*3 + k] = dat->longData[row * dat->width + col] >> 8*k;
-                    frame.data[row * frame.step + col*3 + k] = dat->longData[row * dat->width + col] >> 8*k;
+        try {
+            OpenHRP::ImageData_var dat = virtualCamera->getImageData();
+            frame.cols = dat->width;
+            frame.rows = dat->height;
+            for (int row=0; row<dat->height; ++row) {
+                for (int col=0; col<dat->width; ++col) {
+                    for (int k=0; k<3; ++k) {
+                        //frame.data[row * frame.cols + col*3 + k] = dat->longData[row * dat->width + col] >> 8*k;
+                        frame.data[row * frame.step + col*3 + k] = dat->longData[row * dat->width + col] >> 8*k;
+                    }
                 }
             }
+        } catch (...) {
+            viewSimulator->getCameraSequence(cs);
+            virtualCamera = cs[devId];
         }
     }
     else if(type==RAW)
