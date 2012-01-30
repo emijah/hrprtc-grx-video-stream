@@ -82,7 +82,11 @@ camera::init(unsigned int _devId, bool _fileout, int _cam_num, CORBA::ORB_ptr or
             viewSimulator = OpenHRP::ViewSimulator::_narrow(cxt->resolve(ncName));
             OpenHRP::CameraSequence_var cs;
             viewSimulator->getCameraSequence(cs);
-            virtualCamera = cs[devId];
+            for (int i=0; i<cs->length(); i++)
+            {
+                if ( devId == cs[i]->getCameraParameter()->sensorId )
+                    virtualCamera = cs[i];
+            }
         } catch (const CORBA::ORB::InvalidName&) {
             std::cerr << "can't resolve NameService" << std::endl;
         }
@@ -274,7 +278,11 @@ camera::capture ()
         } catch (...) {
             OpenHRP::CameraSequence_var cs;
             viewSimulator->getCameraSequence(cs);
-            virtualCamera = cs[devId];
+            for (int i=0; i<cs->length(); i++)
+            {
+                if ( devId == cs[i]->getCameraParameter()->sensorId )
+                    virtualCamera = cs[i];
+            }
         }
     }
     else if(type==RAW)
