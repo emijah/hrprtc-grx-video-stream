@@ -8,7 +8,16 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <linux/types.h>
+
+#include <linux/version.h>
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,38)
+#include <libv4l1-videodev.h>
+#else
 #include <linux/videodev.h>
+#endif
+#include <linux/videodev2.h>
+
+//#endif
 
 #include "ViewSimulator.hh"
 
