@@ -1,0 +1,5 @@
+VideoStream (0.5.13); urgency=low
+
+  * Change the dependency (libcv-dev -> libcv??, libhighgui-dev -> libhighgui4, libcvaux-dev -> X)
+
+ -- kawasumi <kawasumi@gegeralrobotix.com>  Tue, 14 Feb 2012 15:37:24 +0900
