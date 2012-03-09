@@ -76,6 +76,9 @@ RTC::ReturnCode_t VideoStream::onInitialize ()
 
     // </rtc-template>
 
+    RTC::Manager& rtcManager = RTC::Manager::instance();
+    std::cout << "corba.nameservers: " << rtcManager.getConfig()["corba.nameservers"] << std::endl;
+
     RTC::Properties & prop = getProperties ();
     fileout = coil::toBool (prop["fileout"].c_str(), "YES", "NO", false);
 
