@@ -1,8 +1,11 @@
 #include <cstdio>
 #include <iostream>
 #include <iomanip>
-#include <uEye.h>
 #include <unistd.h>
+
+#ifdef USE_UEYE_CAMERA
+#include <uEye.h>
+#endif
 
 #include "camera.h"
 
@@ -154,6 +157,7 @@ camera::init(unsigned int _devId, bool _fileout, int _cam_num, CORBA::ORB_ptr or
         frame = cv::Mat(height, width, CV_8UC3);
 
     }
+#ifdef USE_UEYE_CAMERA
     else
     {
         m_hCam = static_cast<HCAM>(devId);
@@ -232,6 +236,7 @@ camera::init(unsigned int _devId, bool _fileout, int _cam_num, CORBA::ORB_ptr or
         std::cerr << "frame_X:" << frame.cols << std::endl;
         std::cerr << "frame_Y:" << frame.rows << std::endl;
     }
+#endif // USE_UEYE_CAMERA
 
     fileout = _fileout;
     if (fileout)
@@ -252,9 +257,11 @@ camera::init(unsigned int _devId, bool _fileout, int _cam_num, CORBA::ORB_ptr or
 void
 camera::start()
 {
+#ifdef USE_UEYE_CAMERA
     if(type==uEye)
         // capture start
         int nRet = is_CaptureVideo(m_hCam, IS_DONT_WAIT);
+#endif
 }
 
 
