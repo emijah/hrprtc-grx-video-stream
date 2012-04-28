@@ -24,7 +24,7 @@ if(NOT QNXNTO)
   endif()
 
   if (EXISTS /usr/include/uEye.h)
-    add_definitions(USE_UEYE_CAMERA)
+    add_definitions(-DUSE_UEYE_CAMERA)
   endif()
 
   include(GenerateStubSkel)
