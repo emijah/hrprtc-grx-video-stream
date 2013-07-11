@@ -5,6 +5,8 @@
 
 #ifdef USE_UEYE_CAMERA
 #include <uEye.h>
+// for deprecated apis
+// URL: http://www.ids-imaging.jp/frontend/files/uEyeManuals/Manual_jpn/uEye_Manual/index.html?sdk_historie.html
 #endif
 
 #include "camera.h"
@@ -185,7 +187,11 @@ camera::init(unsigned int _devId, bool _fileout, int _cam_num, CORBA::ORB_ptr or
         std::cout << "o:" << IS_SUCCESS << std::endl;
         std::cout << "x:" << IS_NO_SUCCESS << std::endl;
 
+#if UEYE_VERSION(4, 00, 0) < UEYE_VERSION_CODE
+        int m_nColorMode = IS_CM_RGB8_PACKED;
+#else
         int m_nColorMode = IS_SET_CM_RGB24;
+#endif
         int m_nBitsPerPixel=24;
         nRet = is_SetColorMode(m_hCam, m_nColorMode);
         std::cout << "colormode:" << nRet << std::endl;
@@ -217,7 +223,13 @@ camera::init(unsigned int _devId, bool _fileout, int _cam_num, CORBA::ORB_ptr or
         m_nSizeX = aoi_w;
         m_nSizeY = aoi_h;
         //afeterAOI
+// 
+#if UEYE_VERSION(4, 00, 0) < UEYE_VERSION_CODE
+        UINT nPixelClock = 30*2;
+        nRet = is_PixelClock(m_hCam, IS_PIXELCLOCK_CMD_SET, (void*)&nPixelClock, sizeof(nPixelClock));
+#else
         nRet = is_SetPixelClock(m_hCam, 30*2);
+#endif
         std::cout << "pixel:" << nRet << std::endl;
 
         nRet = is_AllocImageMem(m_hCam, m_nSizeX, m_nSizeY, m_nBitsPerPixel, &m_pcImageMemory, &m_nMemoryId);
