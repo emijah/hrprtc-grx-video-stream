@@ -188,9 +188,9 @@ camera::init(unsigned int _devId, bool _fileout, int _cam_num, CORBA::ORB_ptr or
         std::cout << "x:" << IS_NO_SUCCESS << std::endl;
 
 #if UEYE_VERSION(4, 00, 0) < UEYE_VERSION_CODE
-        int m_nColorMode = IS_CM_RGB8_PACKED;
+        int m_nColorMode = IS_CM_BGR8_PACKED;
 #else
-        int m_nColorMode = IS_SET_CM_RGB24;
+        int m_nColorMode = IS_SET_CM_BGR24;
 #endif
         int m_nBitsPerPixel=24;
         nRet = is_SetColorMode(m_hCam, m_nColorMode);
